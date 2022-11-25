@@ -10,6 +10,17 @@ export eigSVD, pca
 
 SVDRes = NamedTuple{(:projection, :values, :vectors), Tuple{Matrix{Float64}, Vector{Float64}, Matrix{Float64}}}
 
+"""
+Perform truncated singular value decomposition of a matrix `A` to return `k` first values.
+
+Designed to work with sparse matrices. If `k` is not specified, all values are returned.
+
+# Examples
+```julia-repl
+using SparseArrays
+eigSVD(sprand(100, 100, 0.2), 10)
+```
+"""
 function eigSVD(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int=-1)::SVDRes where T<:Real
     B = A' * A;
     if k == -1
@@ -27,6 +38,19 @@ function eigSVD(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int=-1)::SVDRes wher
     return SVDRes((U, d, V))
 end
 
+"""
+Perform fast randomized PCA of a matrix `A` to return `k` first components.
+
+Designed to work with sparse matrices.
+
+Parameter `q` is the number of pass over `A`, `q` should larger than 1 and `q` times pass eqauls to `(q-2)/2` times power iteration.
+
+# Examples
+```julia-repl
+using SparseArrays
+pca(sprand(100, 100, 0.2), 10; q=3)
+```
+"""
 function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes where T<:Real
 # this is the fast randomized PCA for sparse data
 # q is the number of pass over A, q should larger than 1 and q times pass eqauls to (q-2)/2 times power iteration
