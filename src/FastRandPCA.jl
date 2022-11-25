@@ -8,8 +8,6 @@ using Random
 
 export eigSVD, pca
 
-SVDRes = NamedTuple{(:projection, :values, :vectors), Tuple{Matrix{Float64}, Vector{Float64}, Matrix{Float64}}}
-
 """
 Perform truncated singular value decomposition of a matrix `A` to return `k` first values.
 
@@ -21,7 +19,7 @@ using SparseArrays
 eigSVD(sprand(100, 100, 0.2), 10)
 ```
 """
-function eigSVD(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int=-1)::SVDRes where T<:Real
+function eigSVD(A::AbstractMatrix{<:Number}, k::Int=-1)
     B = A' * A;
     if k == -1
         res = eigen(Matrix(B))
@@ -35,7 +33,7 @@ function eigSVD(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int=-1)::SVDRes wher
     d::Vector{Float64} = sqrt.(λ);
     U::Matrix{Float64} = ((V' ./ d) * A')';
 
-    return SVDRes((U, d, V))
+    return SVD(U, d, V)
 end
 
 """
@@ -51,14 +49,13 @@ using SparseArrays
 pca(sprand(100, 100, 0.2), 10; q=3)
 ```
 """
-function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes where T<:Real
+function pca(A::AbstractMatrix{<:Number}, k::Int; q::Int=10)
     q >= 2 || error("Pass parameter q must be larger than 1 !");
 
     s = 5;
-    trans = false
     if size(A, 1) > size(A, 2)
-        A = A'
-        trans = true
+        r = pca(A', k; q=q)
+        return SVD(Matrix(r.Vt), r.S, Matrix(r.U))
     end
 
     m,n = size(A);
@@ -66,7 +63,7 @@ function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes
         Q = randn(n, k+s);
         Q = A*Q;
         if q == 2
-            Q = eigSVD(Q).projection;
+            Q = eigSVD(Q).U;
         else
             Q = lu(Q).L;
         end
@@ -76,7 +73,7 @@ function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes
     upper = floor((q-1)/2);
     for i = 1:upper
         if i == upper
-            Q = eigSVD(A*(A'*Q)).projection;
+            Q = eigSVD(A*(A'*Q)).U;
         else
             Q = lu(A*(A'*Q)).L;
         end
@@ -87,11 +84,7 @@ function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes
     V = V[:, ind]';
     S = S[ind];
 
-    if trans
-        U,V = V,U
-    end
-
-    return SVDRes((U, S, V))
+    return SVD(U, S, V)
 end
 
 end
