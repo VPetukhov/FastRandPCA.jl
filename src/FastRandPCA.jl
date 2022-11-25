@@ -52,8 +52,6 @@ pca(sprand(100, 100, 0.2), 10; q=3)
 ```
 """
 function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes where T<:Real
-# this is the fast randomized PCA for sparse data
-# q is the number of pass over A, q should larger than 1 and q times pass eqauls to (q-2)/2 times power iteration
     q >= 2 || error("Pass parameter q must be larger than 1 !");
 
     s = 5;
@@ -68,7 +66,7 @@ function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes
         Q = randn(n, k+s);
         Q = A*Q;
         if q == 2
-            Q = eigSVD(Q)[1];
+            Q = eigSVD(Q).projection;
         else
             Q = lu(Q).L;
         end
@@ -78,15 +76,15 @@ function pca(A::Union{SparseMatrixCSC{T}, Matrix{T}}, k::Int; q::Int=10)::SVDRes
     upper = floor((q-1)/2);
     for i = 1:upper
         if i == upper
-            Q = eigSVD(A*(A'*Q))[1];
+            Q = eigSVD(A*(A'*Q)).projection;
         else
             Q = lu(A*(A'*Q)).L;
         end
     end
     V,S,U = eigSVD(A'*Q);
     ind = s+1:k+s;
-    U = Q * U[:, ind];
-    V = V[:, ind];
+    U = (Q * U[:, ind])';
+    V = V[:, ind]';
     S = S[ind];
 
     if trans
