@@ -4,7 +4,7 @@
 
 Fast randomized PCA algorithms for Sparse Data. It's a julia re-implementation of Matlab [frPCA_sparse](https://github.com/XuFengthucs/frPCA_sparse).
 
-The package includes an implementation of two functions `eigSVD` and `pca`, which are designed to work with sparse matrices (`SparseMatrixCSC`), though can also be applied with normal ones (`Matrix`).
+The package includes an implementation of two functions `eig_svd` and `pca`, which are designed to work with sparse matrices (`SparseMatrixCSC`), though can also be applied with normal ones (`Matrix`).
 
 ## References
 

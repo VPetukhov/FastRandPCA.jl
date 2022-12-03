@@ -6,18 +6,20 @@ using SparseArrays
     for (n,m) in [[100, 20], [20, 100], [1000, 1000]]
         mat = sprand(n, m, 0.2)
 
-        eigs = eigSVD(mat)
+        eigs = eig_svd(mat)
         @test all(size(eigs.V) .== size(mat, 2))
         @test length(eigs.S) == size(mat, 2)
         @test all(size(eigs.U) .== size(mat))
 
         k = 10
-        pcs = pca(mat, k; q=3)
-        @test size(pcs.Vt, 2) == size(mat, 2)
-        @test size(pcs.Vt, 1) == k
-        @test length(pcs.S) == k
-        @test size(pcs.U, 2) == size(mat, 1)
-        @test size(pcs.U, 1) == k
-        @test all(size(pcs.U * mat) .== size(pcs.Vt))
+        for exact in [false, true]
+            pcs = pca(mat, k; q=3, exact_svd=exact)
+            @test size(pcs.Vt, 2) == size(mat, 2)
+            @test size(pcs.Vt, 1) == k
+            @test length(pcs.S) == k
+            @test size(pcs.U, 2) == size(mat, 1)
+            @test size(pcs.U, 1) == k
+            @test all(size(pcs.U * mat) .== size(pcs.Vt))
+        end
     end
 end
