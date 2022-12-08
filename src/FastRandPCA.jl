@@ -37,8 +37,8 @@ function eig_svd(A::AbstractMatrix{<:Number}, k::Int=-1; krylovdim::Int=-1, kwar
     end
 
     λ[λ .< 0] .= 0 # Some of zero values become negative due to numerical errors
-    d::Vector{Float64} = sqrt.(λ);
-    U::Matrix{Float64} = ((V' ./ d) * A')';
+    d = sqrt.(λ);
+    U::Matrix = ((V' ./ d) * A')';
 
     return SVD(U, d, V)
 end

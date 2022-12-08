@@ -21,5 +21,12 @@ using SparseArrays
             @test size(pcs.U, 1) == k
             @test all(size(pcs.U * mat) .== size(pcs.Vt))
         end
+
+        for MT in [SparseMatrixCSC{Float32, Int32}, Matrix{Float32}]
+            pcs = pca(MT(mat), k; q=3)
+            @test eltype(pcs.U) == Float32
+            @test eltype(pcs.V) == Float32
+            @test eltype(pcs.S) == Float32
+        end
     end
 end
