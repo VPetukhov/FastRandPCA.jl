@@ -1,7 +1,7 @@
 name = "FastRandPCA"
 uuid = "cd768af4-c647-49d3-847e-9c96ab5a17a9"
 authors = ["Viktor Petukhov <viktor.petukhov+gh@pm.me> and contributors"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
