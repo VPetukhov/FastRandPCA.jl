@@ -1,7 +1,7 @@
 name = "FastRandPCA"
 uuid = "cd768af4-c647-49d3-847e-9c96ab5a17a9"
 authors = ["Viktor Petukhov <viktor.petukhov+gh@pm.me> and contributors"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
@@ -11,7 +11,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
 julia = "1"
-KrylovKit = "0.6"
+KrylovKit = "0.6 - 0.8"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
